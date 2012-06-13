@@ -5,6 +5,7 @@ import logging
 import os
 import jinja2
 import cgi
+from profanity_filter import ProfanitiesFilter
 
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
 JINJA_ENV = jinja2.Environment(loader = jinja2.FileSystemLoader(TEMPLATE_DIR))
@@ -62,8 +63,13 @@ class ContentHandler(PageHandler):
         def get(self):
             logging.info('Handling GET request: Processing content.')
             content = self.request.get('content')
-            content += 'asdf'
+
+            filter = ProfanitiesFilter(['fuck', 'shit'], replacements="-",
+                     complete = True, inside_words = True)
+            content = filter.clean(content)
+
             self.write(content)
+
 
 app = webapp2.WSGIApplication([('/', MainPage),
                             ('/check', ContentHandler)],
