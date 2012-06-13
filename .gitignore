@@ -5,4 +5,4 @@ favicon.ico
 bin
 include
 lib
-templates
+/templates

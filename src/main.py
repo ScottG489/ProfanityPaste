@@ -58,7 +58,15 @@ class MainPage(PageHandler):
     def escape_html(self, string):
             return cgi.escape(string, quote=True)
 
-app = webapp2.WSGIApplication([('/', MainPage)],
+class ContentHandler(PageHandler):
+        def get(self):
+            logging.info('Handling GET request: Processing content.')
+            content = self.request.get('content')
+            content += 'asdf'
+            self.write(content)
+
+app = webapp2.WSGIApplication([('/', MainPage),
+                            ('/check', ContentHandler)],
                             debug=True)
 
 #def main():
