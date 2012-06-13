@@ -1,0 +1,4 @@
+screen -t server
+screen -t git
+
+screen -t main vim src/main.py
