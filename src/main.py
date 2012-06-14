@@ -56,19 +56,30 @@ class MainPage(PageHandler):
 
         return errors
 
-    def escape_html(self, string):
-            return cgi.escape(string, quote=True)
 
 class ContentHandler(PageHandler):
         def get(self):
             logging.info('Handling GET request: Processing content.')
             content = self.request.get('content')
+            content = escape_html(content)
 
-            filter = ProfanitiesFilter(['fuck', 'shit'], replacements="-",
+            bad_profanity = ['fuck', 'shit', 'cunt']
+            ok_profanity = ['bastard', 'bitch', 'crap']
+
+            bad_filter = ProfanitiesFilter(bad_profanity, 1, replacements="-",
                      complete = True, inside_words = True)
-            content = filter.clean(content)
+            content = bad_filter.clean(content)
+
+            ok_filter = ProfanitiesFilter(ok_profanity, 2, replacements="-",
+                     complete = True, inside_words = True)
+            content = ok_filter.clean(content)
+
+            logging.info('CONTENT: ' + content)
 
             self.write(content)
+
+def escape_html(string):
+    return cgi.escape(string, quote=True)
 
 
 app = webapp2.WSGIApplication([('/', MainPage),

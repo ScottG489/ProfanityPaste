@@ -8,14 +8,16 @@ __version__ = '0.0.1'
 
 import random
 import re
+import logging
 
 class ProfanitiesFilter(object):
-    def __init__(self, filterlist, ignore_case=True, replacements="$@%-?!", 
+    def __init__(self, filterlist, level, ignore_case=True, replacements="$@%-?!", 
                  complete=True, inside_words=False):
         """
         Inits the profanity filter.
 
         filterlist -- a list of regular expressions that
+        level -- indicates how severe the profanity in filterlist is.
         matches words that are forbidden
         ignore_case -- ignore capitalization
         replacements -- string with characters to replace the forbidden word
@@ -29,6 +31,7 @@ class ProfanitiesFilter(object):
         self.replacements = replacements
         self.complete = complete
         self.inside_words = inside_words
+        self.level = level
 
     def _make_clean_word(self, length):
         """
@@ -41,6 +44,12 @@ class ProfanitiesFilter(object):
 
     def __replacer(self, match):
         value = match.group()
+        logging.info('PROFANITY: ' + value)
+        if self.level == 1:
+            return '<span style="background: red">' + value + '</span>'
+        elif self.level == 2:
+            return '<span style="background: yellow">' + value + '</span>'
+
         if self.complete:
             return self._make_clean_word(len(value))
         else:
@@ -70,7 +79,7 @@ if __name__ == '__main__':
     print f.clean(example)
     # Returns "I am doing --- ------ badlike things."
 
-    f.inside_words = True    
+    f.inside_words = True
     print f.clean(example)
     # Returns "I am doing --- ------ ---like things."
 

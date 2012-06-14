@@ -15,9 +15,8 @@
         data: {content: $('#content').val()},
         url: "/check"
       }).done( function(response) {
-        $('#response').text(response);
+        $('#response').html(response);
       });
-        //$('#response').text($('#content').val());
     });
   });
 </script>
